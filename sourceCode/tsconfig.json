@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "paths": {
+      "usr/users.domain": [
+        "libs/users.domain/src"
+      ],
+      "usr/users.domain/*": [
+        "libs/users.domain/src/*"
+      ],
+      "usr/users.infrastructure": [
+        "libs/users.infrastructure/src"
+      ],
+      "usr/users.infrastructure/*": [
+        "libs/users.infrastructure/src/*"
+      ],
+      "usa/users.application": [
+        "libs/users.application/src"
+      ],
+      "usa/users.application/*": [
+        "libs/users.application/src/*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
