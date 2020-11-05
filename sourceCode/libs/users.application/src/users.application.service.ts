@@ -68,6 +68,8 @@ export class UsersApplicationService {
      */
     async getByUsernameAndSystemId(username: string, systemId: string, callSource = 0): Promise<any> {
      try {
+         // aqui se hace esta instanciacion para verificar que el username y el systemId cumplen con las especificaciones
+         // de que estipula la clase User, si ocurre un error de validacion, la clase Simple user lanzara una excepcion
         const simpleUser: SimpleUser = new SimpleUser(username, systemId);
         const user: User = await this.usersRepository.findByUsernameAndSystemId(username, systemId);
         if (!user) {
@@ -89,6 +91,33 @@ export class UsersApplicationService {
             throw error;
         }
     }
+
+
+    async getByPropertyNameValueAndSystemId(propertyName: string, propertyValue: any, systemId: string, callSource = 0): Promise<any> {
+        try {
+           const propertyAndValueObject = {};
+           propertyAndValueObject[propertyName] = Number.parseInt(propertyValue, 10);
+           const user: User = await this.usersRepository.findByPropertyValueAndSystemId(propertyAndValueObject, systemId);
+           if (!user) {
+               throw new AppNotFoundException();
+           }
+           // return of(this.convertToUserDto(user, callSource)).toPromise();
+           return of(user).toPromise();
+       } catch (exception) {
+               this.logger.error(exception);
+               if ( exception instanceof UserException) {
+                   const message = (exception as UserException).Message;
+                   throw new AppBadRequestException(message);
+               }
+               if (exception instanceof AppNotFoundException ) {
+                   throw exception;
+               }
+   
+               const error = this.appConfigService.getEnvironment() === EnvironmentTypes.dev || callSource === 1 ? exception : {};
+               throw error;
+           }
+       }
+
 
     /**
      * 
