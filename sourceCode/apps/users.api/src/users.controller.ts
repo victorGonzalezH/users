@@ -51,6 +51,28 @@ export class UsersController {
     }
 
 
+
+  /**
+   * 
+   * @param payload
+   */
+  @MessagePattern({ command: 'getByPropertyNameValue' })
+  msGetByProperty(payload: { propertyName: string, propertyValue: any, systemId: string, callSource: number }): Observable<UserDto> {
+    return from(this.usersApplication.getByPropertyNameValueAndSystemId(payload.propertyName, payload.propertyValue, payload.systemId, payload.callSource)
+    .catch(exception => {
+      if ( exception instanceof AppBadRequestException) {
+        const message = (exception as AppBadRequestException).Message;
+        throw new RpcException('BadRequest: ' + message);
+    }
+      if ( exception instanceof AppNotFoundException) {
+        return null;
+    }
+
+      throw new RpcException('InternalServerError: ' + exception);
+     }));
+  }
+
+
     /**
      * 
      * @param payload
