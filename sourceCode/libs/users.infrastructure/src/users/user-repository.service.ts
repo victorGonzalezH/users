@@ -56,6 +56,19 @@ export class UserRepositoryService {
   }
 
 
+
+  public async findByPropertyValueAndSystemId(propertyNameAndValueObject: any, systemId: string): Promise<User> {
+    try {
+      const propertyNameAndValueObjectCopy =  { ...propertyNameAndValueObject }; // Object.assign({}, propertyNameAndValueObject);
+      propertyNameAndValueObjectCopy.systems = { _id: systemId };
+      const result = await this.userModel.findOne(propertyNameAndValueObjectCopy);
+      return result;
+    } catch (error) {
+      throw error;
+  }
+}
+
+
     /**
      * 
      * @param user usuario a guardar
