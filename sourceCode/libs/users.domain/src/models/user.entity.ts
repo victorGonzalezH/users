@@ -1,7 +1,7 @@
 import { DomainException } from 'utils';
 
 
-export class SimpleUser {
+export class BaseUser {
 
     constructor(username: string, systemId: string) {
         if (username == undefined || username === '') { throw new UserException('Invalid username'); }
@@ -30,7 +30,7 @@ export class SimpleUser {
 }
 
 // tslint:disable-next-line: max-classes-per-file
-export class User extends SimpleUser {
+export class User extends BaseUser {
 
     constructor(username: string, password: string, name: string, lastName: string, systemId: string) {
         super(username, systemId);
