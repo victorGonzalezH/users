@@ -32,6 +32,9 @@ export class SaveUserCommand {
     @Max(24)
     systemId: string;
 
+    @IsNotEmpty()
+    roleId: number;
+
     @IsNumber()
     callSource: number;
 

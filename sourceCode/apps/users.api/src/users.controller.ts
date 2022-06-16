@@ -31,11 +31,12 @@ export class UsersController {
 
 
   /**
-   * 
-   * @param payload
+   * Gets a user from the database. This method is used by other microservices to retrieve
+   * a user. Due that this method is used by other microservices, the return type is any,i.e. the
+   * microservice caller needs all the properties from the user   * @param payload
    */
   @MessagePattern({ command: 'getByUsername' })
-    msGetByUsername(payload: { username: string, systemId: string, callSource: number }): Observable<UserDto> {
+    msGetByUsername(payload: { username: string, systemId: string, callSource: number }): Observable<any> {
       return from(this.usersApplication.getByUsernameAndSystemId(payload.username, payload.systemId, payload.callSource)
       .catch(exception => {
         if ( exception instanceof AppBadRequestException) {
@@ -57,8 +58,8 @@ export class UsersController {
    * @param payload
    */
   @MessagePattern({ command: 'getByPropertyNameValue' })
-  msGetByProperty(payload: { propertyName: string, propertyValue: any, systemId: string, callSource: number }): Observable<UserDto> {
-    return from(this.usersApplication.getByPropertyNameValueAndSystemId(payload.propertyName, payload.propertyValue, payload.systemId, payload.callSource)
+  msGetByProperty(payload: { propertyName: string, propertyValue: any, propertyType: number, systemId: string, callSource: number }): Observable<UserDto> {
+    return from(this.usersApplication.getByPropertyNameValueAndSystemId(payload.propertyName, payload.propertyValue, payload.propertyType, payload.systemId, payload.callSource)
     .catch(exception => {
       if ( exception instanceof AppBadRequestException) {
         const message = (exception as AppBadRequestException).Message;

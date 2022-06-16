@@ -1,11 +1,12 @@
-export interface System {
+import { DatabaseObject } from "utils";
 
-    /**
-     * Identificador del sistema
-     * System id
-     */
-    id: string;
+export class System extends DatabaseObject {
 
+    constructor() {
+        super();
+    }
+
+    
     /**
      * Nombre del sistema
      * System's name

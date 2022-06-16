@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Document } from 'mongoose';
 import { User } from 'usr/users.domain';
 import * as mongoose from 'mongoose';
-import { throws } from 'assert';
 
 
 @Injectable()
@@ -47,22 +46,27 @@ export class UserRepositoryService {
      * @param username nombre de usuario
      * @param systemId identificador del sistema
      */
-    public async findByUsernameAndSystemId(username: string, systemId: string): Promise<User> {
+    public async findByUsernameAndSystemId(username: string, systemId: string): Promise<User & Document> {
       try {
-      return await this.userModel.findOne( { username, systems: { _id: systemId } });
+      return await this.userModel.findOne( { username: username, systems: { $elemMatch: { _id: systemId } } });
     } catch (error) {
       throw error;
     }
   }
 
 
-
-  public async findByPropertyValueAndSystemId(propertyNameAndValueObject: any, systemId: string): Promise<User> {
+  /**
+   * Gets a user by its properties values and a system Id
+   * @param propertyNameAndValueObject 
+   * @param systemId 
+   * @returns 
+   */
+  public async findByPropertyValueAndSystemId(propertyNameAndValueObject: any, systemId: string): Promise<User & Document> {
     try {
-      const propertyNameAndValueObjectCopy =  { ...propertyNameAndValueObject }; // Object.assign({}, propertyNameAndValueObject);
-      propertyNameAndValueObjectCopy.systems = { _id: systemId };
-      const result = await this.userModel.findOne(propertyNameAndValueObjectCopy);
-      return result;
+
+      const propertyNameAndValueObjectCopy =  { ...propertyNameAndValueObject };
+      propertyNameAndValueObjectCopy.systems = { $elemMatch: { _id: systemId } }
+      return await this.userModel.findOne(propertyNameAndValueObjectCopy);
     } catch (error) {
       throw error;
   }
@@ -86,6 +90,11 @@ export class UserRepositoryService {
     }
 
 
+  /**
+   * 
+   * @param user 
+   * @returns 
+   */
     public async addGeneric(user: any): Promise<any & Document> {
 
       try {
@@ -102,7 +111,7 @@ export class UserRepositoryService {
      * @param systemId id del sistema / id system
      * @param update objeto que contiene las propiedades a actualizar / object that contains the properties to update
      */
-    public async update(username: string, systemId: string, update: any) {
+    public async update(username: string, systemId: string, update: any): Promise<User & Document> {
 
       try {
 
@@ -111,8 +120,9 @@ export class UserRepositoryService {
         if ( update != null && update != undefined ) {
 
           // Se obtiene el usuario usando con el nombre de usuario e id del sistema
-          const userToUpdate = await this.userModel.findOne( { username, systems: { _id: systemId } });
-
+          //let userToUpdate = await this.userModel.findOne( { username, systems: { _id: systemId } });
+          let userToUpdate = await this.findByUsernameAndSystemId(username, systemId);
+          
           // Si el usuario no existe se retorna null
           if ( userToUpdate == null && userToUpdate == undefined ) {
             return null;
@@ -121,8 +131,12 @@ export class UserRepositoryService {
           // Se hace la actualizacion
           const updateResult = await userToUpdate.updateOne(update);
           if ( updateResult.ok === 1) {
+            
+            // Se vuelve a buscar a el usuario para devolverlo con los cambios realizados
+            userToUpdate = await this.findByUsernameAndSystemId(username, systemId);
             return userToUpdate;
           }
+
           // No se realizo la actualizacion, entonces se devuelve nulo
           return null;
         }

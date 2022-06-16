@@ -11,6 +11,7 @@ import { UsersDomainModule } from 'usr/users.domain';
 import { UserRepositoryService } from 'usr/users.infrastructure/users/user-repository.service';
 import { SystemSchema } from 'usr/users.infrastructure/systems/system.schema';
 import { MessagesRepositoryService, MessagesSchema, MessageSchema } from 'utils';
+import { UserSystemSchema } from 'usr/users.infrastructure/users/user-system.schema';
 
 @Module({
   imports: [ConfigModule.forRoot({ load: [configuration] }), MongooseModule.forRootAsync({
@@ -18,8 +19,12 @@ import { MessagesRepositoryService, MessagesSchema, MessageSchema } from 'utils'
     useClass: DatabaseConfigService,
     inject: [ConfigService],
   }), UsersApplicationModule, UsersInfrastructureModule, UsersDomainModule,
-  MongooseModule.forFeature([{ name: 'User', schema: UserSchema },
-  { name: 'System', schema: SystemSchema }, { name: 'Messages', schema: MessagesSchema }, { name: 'Message', schema: MessageSchema }])],
+  MongooseModule.forFeature([
+    { name: 'User', schema: UserSchema },
+    { name: 'UserSystem', schema: UserSystemSchema },
+    { name: 'System', schema: SystemSchema },
+    { name: 'Messages', schema: MessagesSchema },
+    { name: 'Message', schema: MessageSchema }])],
   controllers: [UsersController],
   providers: [AppConfigService, ConfigService, UsersApplicationService, UserRepositoryService, Logger, MessagesRepositoryService],
 })

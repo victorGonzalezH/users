@@ -11,12 +11,16 @@ import { ConfigService } from '@nestjs/config';
 import { MessageSchema } from 'utils/dist/persistence/mongodb/schemas/message.schema';
 import { MessagesSchema } from 'utils/dist/persistence/mongodb/schemas/messages.schema';
 import { MessagesRepositoryService } from 'utils';
+import { UserSystemSchema } from 'usr/users.infrastructure/users/user-system.schema';
 
 @Module({
   providers: [UsersApplicationService, UserRepositoryService, Logger, AppConfigService, ConfigService, MessagesRepositoryService],
   exports: [UsersApplicationService],
   imports: [UsersInfrastructureModule, UsersDomainModule,
-     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }, {name: 'System', schema: SystemSchema },
+     MongooseModule.forFeature([
+     { name: 'User', schema: UserSchema },
+     { name: 'UserSystem', schema: UserSystemSchema },
+     { name: 'System', schema: SystemSchema },
      { name: 'Message', schema: MessageSchema },
      { name: 'Messages', schema: MessagesSchema }]) ],
 })
